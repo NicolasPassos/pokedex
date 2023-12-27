@@ -2,21 +2,19 @@ import requests
 import json
 from pokemon_model import Pokemon
 
-def converter_poke_api_detail_to_pokemon(poke_detail):
-    pokemon = Pokemon
-    pokemon.poke_id = poke_detail['id']
-    pokemon.poke_name = poke_detail['name']
-    pokemon.poke_types = poke_detail['types']
+def converter_detail_to_pokemon(poke_detail):
+    pokemon = Pokemon(**poke_detail)
 
     return pokemon
 
 def get_pokemon_detail(pokemons):
+    pokemon_list = []
     for pokemon in pokemons:
         response = requests.get(url=pokemon['url'])
         poke_detail = json.loads(response.content)
+        pokemon_list.append(converter_detail_to_pokemon(poke_detail))
 
-        converter_poke_api_detail_to_pokemon(poke_detail)
-
+    return pokemon_list
 
 
 def get_pokemons():

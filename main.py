@@ -33,30 +33,63 @@ def main(page: ft.Page):
     #page.add(logo_pokemon)
     page.add(grid)
 
+    # Criando popup
+    popUp = ft.AlertDialog(on_dismiss='')
+
+    def exibir_detalhes(link: str):
+        pokemon_api = get_pokemon_detail(link)
+        popUp.title = ft.Text(pokemon_api['name'].capitalize())
+        info =  ft.Column(controls=[
+                                    ft.Image(src=pokemon_api['sprites']['front_default']),
+                                    ft.Text(value=f'Nº {pokemon_api["id"]}'),
+                                    ft.Text(value=f'Base experience: {pokemon_api["base_experience"]}'),
+                                    ft.Text(value=f'Height: {pokemon_api["height"]}'),
+                                    ft.Text(value=f'Weight: {pokemon_api["weight"]}'),
+                                    ft.Text(value=f'Is default? {pokemon_api["is_default"]}')
+                                        ],
+                                        horizontal_alignment='center')
+        for i in pokemon_api['types']:
+            info.controls.append(ft.Container(
+                                                ft.Text(value=i['type']['name'].capitalize(), color=ft.colors.BLACK87),
+                                                bgcolor=ft.colors.CYAN_800,
+                                                padding=10,
+                                                
+                                                )
+                                    )
+        popUp.content = info
+        popUp.open = True
+        page.dialog = popUp
+        page.update()
+
     pokemons = get_pokemons()
-    details = get_pokemon_detail(pokemons)
-    widgets = converter_detail_to_widget(details)
-    for widget in widgets:
+    for pokemon in pokemons:
+        photo = pokemon['photo']
+        id = f"Nº {pokemon['id']}"
+        name = pokemon['name'].capitalize()
+        detail = pokemon['detail']
+
+        def create_on_click(detail_link):
+            return lambda e: exibir_detalhes(detail_link)
+    
         container = ft.Container(
             content=ft.Column(
-                            controls=[
-                                        ft.Image(src=widget['photo']),
-                                        ft.Text(value=f"Nº {widget['id']}"),
-                                        ft.Text(widget['name'].capitalize())
-                                        
-                                        ],
-                                        horizontal_alignment='center',
-                                        spacing=2
-                                )
-                            ,bgcolor=ft.colors.BLACK26,
-                            expand=True,
-                            border_radius=ft.border_radius.all(20),
-                            ink=True,
-                            on_click=lambda e: None
-                            )
-        
+                controls=[
+                    ft.Image(src=pokemon['photo']),
+                    ft.Text(value=f"Nº {pokemon['id']}"),
+                    ft.Text(value=pokemon['name'].capitalize()),
+                    ft.Text(value=pokemon['detail'], visible=False)
+                ],
+                horizontal_alignment='center',
+                spacing=2
+            ),
+            bgcolor=ft.colors.BLACK26,
+            expand=True,
+            border_radius=ft.border_radius.all(20),
+            ink=True,
+            on_click=create_on_click(detail)
+        )
+            
         grid.controls.append(container)
-
 
     page.update()
 

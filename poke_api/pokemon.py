@@ -48,7 +48,8 @@ def get_pokemons():
 						from pokemon_list pl
                         join pokemon_details pd on pl.name = pd.name
                         join pokemon_photos pp on pp.id = pd.id
-                        LIMIT 9
+                        where pp.front_default <> 'None'
+                        --LIMIT 9
                         ''')
         pokemons = cursor.fetchall()
         cursor.close()

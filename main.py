@@ -1,5 +1,5 @@
 import flet as ft
-from poke_api.pokemon import *
+from poke_info.pokemon import *
 
 # Padronização do tamanho dos campos
 _with_input = 250
@@ -54,7 +54,7 @@ def main(page: ft.Page):
                                                     expand=1,
                                                     spacing=5,
                                                     padding=10,
-                                                                                         
+                                                    height=400                                     
                                                     )
                                     )
         for i in pokemon_api['types']:

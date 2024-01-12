@@ -1,6 +1,6 @@
 import requests
 import json
-from poke_api.pokemon_model import *
+from poke_info.pokemon_model import *
 import sqlite3
 
 def converter_detail_to_widget(pokemon_list):
@@ -40,7 +40,11 @@ def get_pokemons_detail(pokemons):
     return pokemon_list
 
 def get_pokemons():
+
+    # Declarando lista de widgets
     widgets_list = []
+
+    # Pegando todos os pokemons do banco
     with sqlite3.connect('banco_pokemon.db') as conn:
         cursor = conn.cursor()
         cursor.execute('''
@@ -54,11 +58,27 @@ def get_pokemons():
         pokemons = cursor.fetchall()
         cursor.close()
 
+        # Pegando os tipos de cada pokemon
         for pokemon in pokemons:
+            with sqlite3.connect('banco_pokemon.db') as conn:
+                cursor = conn.cursor()
+                cursor.execute(f'''
+                                select type from pokemon_types where id = {pokemon[0]}
+                                ''')
+                types = cursor.fetchall()
+                cursor.close()
+            # Declarando lista de tipos
+            poke_types = []
+            for _type in types:
+                poke_types.append(_type[0])
+
+            # Montando objeto do widget contendo algumas informações do pokemon
             widget = PokemonWidget(id=pokemon[0],
                                     name=pokemon[1],
                                     photo=pokemon[2],
-                                    detail=pokemon[3]).__dict__
+                                    detail=pokemon[3],
+                                    types=poke_types).__dict__
+            
             widgets_list.append(widget)
             
     return widgets_list

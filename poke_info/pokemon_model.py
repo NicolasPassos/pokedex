@@ -21,8 +21,9 @@ class Pokemon:
         self.weight = weight
 
 class PokemonWidget:
-    def __init__(self, name, photo, id ,detail):
+    def __init__(self, name, photo, id ,detail,types):
         self.name = name
         self.photo = photo
         self.id = id
         self.detail = detail
+        self.types = types
